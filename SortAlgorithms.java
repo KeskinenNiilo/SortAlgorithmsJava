@@ -86,6 +86,22 @@ public class SortAlgorithms {
             }
         }
         
+        public static void knuthSequenceShellSort(int[] data) {
+            int g = 1;
+            while (g < data.length / 3) g = g * 3 + 1; // maksimi numero knuthin sarjassa
+            for (int gap = g; gap > 0; gap /= 3) {
+                for (int i = 0; i < data.length; ++i) {
+                    int temp = data[i];
+                    int j = i;
+                    while (j >= gap && data[j - gap] > temp) {
+                        data[j] = data[j - gap];
+                        j -= gap;
+                    }
+                    data[j] = temp;
+                }
+            }
+        }
+        
         public static void quickSort(int[] data, int low, int high) {
             if (low >= high) return;
             int pivot = data[high]; // arvo johon alkioita verrataan
@@ -178,16 +194,17 @@ public class SortAlgorithms {
 
     public static void main(String[] args) {
         int size = 250000;
-        FunctionRef.FunctionPointer[] sortMethods = new FunctionRef.FunctionPointer[7];
+        FunctionRef.FunctionPointer[] sortMethods = new FunctionRef.FunctionPointer[8];
         sortMethods[0] = FunctionRef::insertionSort;
         sortMethods[1] = FunctionRef::bubbleSort;
         sortMethods[2] = FunctionRef::shellSort;
-        sortMethods[3] = (data) -> FunctionRef.quickSort(data, 0, data.length - 1);
-        sortMethods[4] = (data) -> FunctionRef.optimizedQuickSort(data, 0, data.length - 1);
-        sortMethods[5] = (data) -> FunctionRef.mergeSort(data, 0, data.length - 1);
-        sortMethods[6] = FunctionRef::javaArraysSort;
+        sortMethods[3] = FunctionRef::knuthSequenceShellSort;
+        sortMethods[4] = (data) -> FunctionRef.quickSort(data, 0, data.length - 1);
+        sortMethods[5] = (data) -> FunctionRef.optimizedQuickSort(data, 0, data.length - 1);
+        sortMethods[6] = (data) -> FunctionRef.mergeSort(data, 0, data.length - 1);
+        sortMethods[7] = FunctionRef::javaArraysSort;
         
-        String[] names = {"Insertion Sort", "Bubble Sort", "Shell Sort",
+        String[] names = {"Insertion Sort", "Bubble Sort", "Shell Sort", "Knuth Sequence Shell Sort",
             "Quick Sort", "Optimized Quick Sort", "Merge Sort", "Java Arrays.sort"};
 
         System.out.println("\nRandom: ");
