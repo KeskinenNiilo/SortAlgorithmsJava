@@ -109,7 +109,7 @@ public class SortAlgorithms {
         
         public static void optimizedQuickSort(int[] data, int low, int high) {
             if (low >= high) return;
-            int pivotIndex = gen.nextInt(low, high + 1); // vältetään huonoin O(n^2) tapaus jos lista laskeva tai nouseva;
+            int pivotIndex = gen.nextInt(low, high + 1); // vältetään huonoin O(n^2) tapaus jos lista laskeva tai nouseva
             int pivot = data[pivotIndex]; // optimoidaan valitsemalla random int pivotiksi
             int pTemp = data[pivotIndex];
             data[pivotIndex] = data[high];
@@ -177,7 +177,7 @@ public class SortAlgorithms {
     
 
     public static void main(String[] args) {
-        int size = 100000;
+        int size = 250000;
         FunctionRef.FunctionPointer[] sortMethods = new FunctionRef.FunctionPointer[7];
         sortMethods[0] = FunctionRef::insertionSort;
         sortMethods[1] = FunctionRef::bubbleSort;
