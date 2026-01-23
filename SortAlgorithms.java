@@ -45,11 +45,11 @@ public class SortAlgorithms {
             return data;
         }
 
-        public static void insertionSort(int[] data) {
-            for (int i = 1; i < data.length; ++i) { 
+        public static void insertionSort(int[] data, int left, int right) {
+            for (int i = left + 1; i <= right; ++i) { 
                 int key = data[i];
                 int j = i - 1;
-                while (j >= 0 && data[j] > key) {
+                while (j >= left && data[j] > key) {
                     data[j + 1] = data[j];
                     j = j - 1;
                 }
@@ -172,6 +172,26 @@ public class SortAlgorithms {
             }
         }
         
+        public static void optimizedMerge(int[] data, int mid, int left, int right, int[] tempArray) {
+            for (int k = left; k <= right; k++) tempArray[k] = data[k];
+            int l = left; int r = mid + 1; int i = left;
+            while (l <= mid && r <= right) {
+                if (tempArray[l] <= tempArray[r]) {
+                    data[i] = tempArray[l];
+                    ++l;
+                } else {
+                    data[i] = tempArray[r];
+                    ++r;
+                }
+                ++i;
+            }
+            while (l <= mid) {
+                data[i] = tempArray[l];
+                l++;
+                i++;
+            }
+        }        
+        
         public static void mergeSort(int[] data, int left, int right) {
             if (left < right) {
                 int mid = left + (right - left) / 2; // indeksi keskeltä listaa
@@ -179,6 +199,17 @@ public class SortAlgorithms {
                 mergeSort(data, mid + 1, right); //yhdistetään
                 merge(data, mid, left, right);
             }
+        }
+        
+        public static void optimizedMergeSort(int[] data, int left, int right, int[] tempArray) {
+            if (right - left < 16) {
+                insertionSort(data, left, right);
+                return;
+            }
+            int mid = left + (right - left) / 2;
+            optimizedMergeSort(data, left, mid, tempArray);
+            optimizedMergeSort(data, mid + 1, right, tempArray);
+            optimizedMerge(data, mid, left, right, tempArray);
         }
         
         public static void javaArraysSort(int[] data) {Arrays.sort(data);}
@@ -193,19 +224,21 @@ public class SortAlgorithms {
     
 
     public static void main(String[] args) {
-        int size = 250000;
-        FunctionRef.FunctionPointer[] sortMethods = new FunctionRef.FunctionPointer[8];
-        sortMethods[0] = FunctionRef::insertionSort;
+        int size =250000;
+        int[] tempArray = new int[size];
+        FunctionRef.FunctionPointer[] sortMethods = new FunctionRef.FunctionPointer[9];
+        sortMethods[0] = (data) -> FunctionRef.insertionSort(data, 0, data.length - 1);
         sortMethods[1] = FunctionRef::bubbleSort;
         sortMethods[2] = FunctionRef::shellSort;
         sortMethods[3] = FunctionRef::knuthSequenceShellSort;
         sortMethods[4] = (data) -> FunctionRef.quickSort(data, 0, data.length - 1);
         sortMethods[5] = (data) -> FunctionRef.optimizedQuickSort(data, 0, data.length - 1);
         sortMethods[6] = (data) -> FunctionRef.mergeSort(data, 0, data.length - 1);
-        sortMethods[7] = FunctionRef::javaArraysSort;
+        sortMethods[7] = (data) -> FunctionRef.optimizedMergeSort(data, 0, data.length - 1, tempArray);
+        sortMethods[8] = FunctionRef::javaArraysSort;
         
         String[] names = {"Insertion Sort", "Bubble Sort", "Shell Sort", "Knuth Sequence Shell Sort",
-            "Quick Sort", "Optimized Quick Sort", "Merge Sort", "Java Arrays.sort"};
+            "Quick Sort", "Optimized Quick Sort", "Merge Sort", "Optimized Merge Sort", "Java Arrays.sort"};
 
         System.out.println("\nRandom: ");
         for (int i = 0; i < sortMethods.length; ++i) {
