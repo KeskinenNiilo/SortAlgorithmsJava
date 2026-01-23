@@ -104,17 +104,21 @@ public class SortAlgorithms {
         
         public static void quickSort(int[] data, int low, int high) {
             if (low >= high) return;
-            int pivot = data[high]; // arvo johon alkioita verrataan
+            int mid = low + (high - low) / 2;
+            int pivot = data[mid]; // arvo johon alkioita verrataan
+            int temp = data[high];
+            data[high] = data[mid];
+            data[mid] = temp;
             int index = low; // pivottia suuremman datan indeksi
             for (int i = low; i < high; ++i) {
                 if (data[i] < pivot) { // jos data[i] pienenmpi kuin pivot vaihdetaan se pivottia suuremman alkion kanssa
-                    int temp = data[index];
+                    temp = data[index];
                     data[index] = data[i];
                     data[i] = temp;
                     ++index;
                 }
             }
-            int temp = data[index]; // vaihdetaan pivot oikealle paikalle
+            temp = data[index]; // vaihdetaan pivot oikealle paikalle
             data[index] = data[high];
             data[high] = temp;
             quickSort(data, low, index - 1); //recursio
@@ -122,29 +126,7 @@ public class SortAlgorithms {
         }
         
         private static final Random gen = new Random();
-        
-        public static void optimizedQuickSort(int[] data, int low, int high) {
-            if (low >= high) return;
-            int pivotIndex = gen.nextInt(low, high + 1); // vältetään huonoin O(n^2) tapaus jos lista laskeva tai nouseva
-            int pivot = data[pivotIndex]; // optimoidaan valitsemalla random int pivotiksi
-            int pTemp = data[pivotIndex];
-            data[pivotIndex] = data[high];
-            data[high] = pTemp;
-            int index = low;
-            for (int i = low; i < high; ++i) {
-                if (data[i] < pivot) {
-                    int temp = data[index];
-                    data[index] = data[i];
-                    data[i] = temp;
-                    ++index;
-                }
-            }
-            int temp = data[index];
-            data[index] = data[high];
-            data[high] = temp;
-            optimizedQuickSort(data, low, index - 1);
-            optimizedQuickSort(data, index + 1, high);
-        }
+
         
         public static void merge(int[] data, int mid, int left, int right) {
             int[] L = new int[mid - left + 1]; // kopioidaan listat
@@ -224,21 +206,20 @@ public class SortAlgorithms {
     
 
     public static void main(String[] args) {
-        int size =250000;
+        int size = 500000;
         int[] tempArray = new int[size];
-        FunctionRef.FunctionPointer[] sortMethods = new FunctionRef.FunctionPointer[9];
+        FunctionRef.FunctionPointer[] sortMethods = new FunctionRef.FunctionPointer[8];
         sortMethods[0] = (data) -> FunctionRef.insertionSort(data, 0, data.length - 1);
         sortMethods[1] = FunctionRef::bubbleSort;
         sortMethods[2] = FunctionRef::shellSort;
         sortMethods[3] = FunctionRef::knuthSequenceShellSort;
         sortMethods[4] = (data) -> FunctionRef.quickSort(data, 0, data.length - 1);
-        sortMethods[5] = (data) -> FunctionRef.optimizedQuickSort(data, 0, data.length - 1);
-        sortMethods[6] = (data) -> FunctionRef.mergeSort(data, 0, data.length - 1);
-        sortMethods[7] = (data) -> FunctionRef.optimizedMergeSort(data, 0, data.length - 1, tempArray);
-        sortMethods[8] = FunctionRef::javaArraysSort;
+        sortMethods[5] = (data) -> FunctionRef.mergeSort(data, 0, data.length - 1);
+        sortMethods[6] = (data) -> FunctionRef.optimizedMergeSort(data, 0, data.length - 1, tempArray);
+        sortMethods[7] = FunctionRef::javaArraysSort;
         
         String[] names = {"Insertion Sort", "Bubble Sort", "Shell Sort", "Knuth Sequence Shell Sort",
-            "Quick Sort", "Optimized Quick Sort", "Merge Sort", "Optimized Merge Sort", "Java Arrays.sort"};
+            "Quick Sort", "Merge Sort", "Optimized Merge Sort", "Java Arrays.sort"};
 
         System.out.println("\nRandom: ");
         for (int i = 0; i < sortMethods.length; ++i) {
